@@ -11,18 +11,19 @@ const Register = ({ navigation }) => {
   const [password, setPassword] = useState('')
 
   //Context to manage registering endpoint
-  const { newUser } = useContext(AuthContext)
-
+  const { state, newUser } = useContext(AuthContext)
+  console.log(state.error)
+  
   return (
   <View style={styles.view}>
     <Text style={styles.text}>Sign Up <AntDesign size={35} name='user'></AntDesign> </Text>
     <TextInput value={email} onChangeText={(text) => setEmail(text)} style={styles.input} type='outlined' placeholder='Enter an e-mail' autoCapitalize='none' autoCorrect={false}></TextInput>
     <TextInput value={password} onChangeText={(text) => setPassword(text)}  placeholder='Enter a password' autoCapitalize='none' autoCorrect={false}></TextInput>
-    <Button mode='contained' style={styles.btn} onPress={() => newUser(email, password)} >Register</Button>
+    {state.error !== undefined ? <Text style={styles.error}>Please enter a valid email and/or password</Text> : null}
+    <Button mode='contained' style={styles.btn} onPress={() => newUser({email, password})} >Register</Button>
     <TouchableOpacity style={styles.touch} onPress={() => navigation.navigate('SignIn')} >
       <Text style={{ color: '#4B51FF' }}>Already have an account? Sign In here</Text>
     </TouchableOpacity>
-
   </View>
 )}
 
@@ -58,7 +59,9 @@ const styles = StyleSheet.create({
   touch: {
     marginTop: 25,
   },
-  
+  error: {
+    color: 'red'
+  }
  
 })
 
