@@ -1,5 +1,5 @@
+import AsyncStorage from '@react-native-community/async-storage'
 import React, { useReducer } from 'react'
-import axios from 'axios'
 import api from '../api/backend'
 
 //Create the auth context
@@ -17,41 +17,61 @@ const authReducer = (state, action) => {
     case 'clear_errors':
       return { ...state, error: undefined }
     default:
-      return state
-      
-  }
-  
+      return state 
+  } 
 }
 
 //Create the provider 
 export const AuthProvider = ({ children }) => {
 
-
 //Create the reducer
 const [state, dispatch] = useReducer(authReducer, [{ token: null, error: '' }])
 
-
 //Register a new user
-const newUser = async( {email, password} ) => {
+const newUser = async( { email, password, navigation } ) => {
   try {
     const res = await api.post('/signup', { email, password })
-    //console.log(`Your token is: ${res.data.token}`)
+    await AsyncStorage.setItem('token', res.data.token)
     dispatch({ type: 'register_user', payload: res.data.token })
     clearErrors()
+    navigation.navigate('mainFlow')
   } catch (e) {
     dispatch({ type: 'add_error', payload: 'Please enter a valid email and/or password' })
   }
 }
+
 //Sign in Existing User
-const signIn = async ({ email, password }) => {
+const signIn = async ({ email, password, navigation }) => {
   try {
     const res = await api.post('/signin', { email, password })
+    await AsyncStorage.setItem('token', res.data.token)
     dispatch({ type: 'sign_in', payload: res.data.token })
     clearErrors()
+    console.log('Signed in')
+    navigation.navigate('mainFlow')
     
   } catch (e) {
     dispatch({ type: 'add_error', payload: 'Invalid email and/or password' })
   }
+}
+
+//Check if a token exists locally, then don't need to sign in repeatedly
+const localCheck = async ( navigation ) => {
+  const token = await AsyncStorage.getItem('token')
+
+  //if it exists, then user is already signed in 
+  if(token) { 
+    dispatch({ type: 'sign_in', payload: token })
+    navigation.navigate('mainFlow')
+  } else {
+    navigation.navigate('authFlow')
+  }
+}
+
+//Sign out a user
+const signOut = async ( navigation ) => {
+  await AsyncStorage.removeItem('token')
+  navigation.navigate('authFlow')
 }
 
 //Clear errors
@@ -59,8 +79,7 @@ const clearErrors = () => {
   dispatch({ type: 'clear_errors' })
 }
 
-
-return <AuthContext.Provider value={{ state, newUser, signIn, clearErrors }}>{children}</AuthContext.Provider>
+return <AuthContext.Provider value={{ state, newUser, signIn, localCheck, signOut, clearErrors }}>{children}</AuthContext.Provider>
 
 }
 

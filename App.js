@@ -1,19 +1,68 @@
 import React from 'react'
-import { createAppContainer } from 'react-navigation'
+import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
+import { createBottomTabNavigator } from 'react-navigation-tabs'
 import { AuthProvider } from './src/context/authContext'
+
+//Screens
 import RegisterScreen from './src/screens/Register'
 import SignInScreen from './src/screens/SignIn'
+import DeviceScreen from './src/screens/Device'
+import DailyScreen from './src/screens/Daily'
+import WeeklyScreen from './src/screens/Weekly'
+import MonthlyScreen from './src/screens/Monthly'
 
-const navigator = createStackNavigator({
-  Register: RegisterScreen,
-  SignIn: SignInScreen
-}, {
-  initialRouteName: 'Register',
-  defaultNavigationOptions: {
-    //title: 'SmartECG Monitor',
-    cardStyle: { backgroundColor: '#fff' }
-  }
+
+//Icons
+import { Octicons ,Entypo } from 'react-native-vector-icons'
+
+
+const navigator = createSwitchNavigator({
+  authFlow: createStackNavigator({
+    Register: RegisterScreen,
+    SignIn: SignInScreen
+  }),
+  mainFlow: createBottomTabNavigator({
+    Device: {
+      screen: DeviceScreen,
+      navigationOptions: {
+        tabBarLabel: "My Device",
+        tabBarIcon: () => (<Octicons color='white' name='device-mobile' size={25}></Octicons>)
+      }
+    }, 
+    Daily: {
+      screen: DailyScreen,
+      navigationOptions: {
+        
+        tabBarIcon: () => (<Entypo color='white' name='bar-graph' size={25}></Entypo>)
+      }
+    } ,
+    Weekly: {
+      screen:  WeeklyScreen,
+      navigationOptions: {
+        tabBarIcon: () => (<Entypo color='white' name='line-graph' size={25}></Entypo>),
+        
+      }
+    },
+    Monthly:{
+      screen: MonthlyScreen,
+      navigationOptions: {  
+        tabBarIcon: () => (<Entypo color='white' name='area-graph' size={25}></Entypo>),
+        
+      }
+    } 
+  }, {
+    tabBarOptions: {
+      style: {
+        backgroundColor: '#4B51FF',
+        padding: 5
+      },
+      activeTintColor: '#FFF',
+      inactiveTintColor: '#FFF'
+    }
+    
+  })
+  
 })
 
 const App = createAppContainer(navigator)

@@ -20,7 +20,7 @@ const SignIn = ({ navigation }) => {
       <TextInput value={email} onChangeText={(text) => setEmail(text)} style={styles.input} type='outlined' placeholder='Enter an e-mail' autoCapitalize='none' autoCorrect={false}></TextInput>
       <TextInput value={password} onChangeText={(text) => setPassword(text)} placeholder='Enter a password' autoCapitalize='none' autoCorrect={false}></TextInput>
       {state.error !== undefined ? <Text style={styles.error}>Invalid Email and/or password</Text> : null}
-      <Button mode='contained' style={styles.btn} onPress={() => signIn({ email, password })}>Sign In</Button>
+      <Button mode='contained' style={styles.btn} onPress={() => signIn({ email, password, navigation })}>Sign In</Button>
       <TouchableOpacity style={styles.touch} onPress={() => navigation.navigate('Register')} >
         <Text style={{ color: '#4B51FF' }}>New user? Register here</Text>
       </TouchableOpacity>
