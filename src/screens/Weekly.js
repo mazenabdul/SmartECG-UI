@@ -20,9 +20,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 30,
+    padding: 5,
     textAlign: 'center',
     marginVertical: 40,
-    color: '#4B51FF'
+    color: '#FFF',
+    backgroundColor: '#4B51FF'
   },
  
 })
