@@ -3,6 +3,7 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
 import { AuthProvider } from './src/context/authContext'
+import { DataProvider } from './src/context/dataContext'
 
 //Screens
 import RegisterScreen from './src/screens/Register'
@@ -68,5 +69,11 @@ const navigator = createSwitchNavigator({
 const App = createAppContainer(navigator)
 
 export default () => {
-  return <AuthProvider><App /></AuthProvider>
+  return ( 
+      <AuthProvider>
+        <DataProvider>
+          <App />
+        </DataProvider>
+      </AuthProvider>
+    )
 }

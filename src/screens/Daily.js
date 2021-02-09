@@ -1,23 +1,32 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import DataContext from '../context/dataContext'
 import { View, StyleSheet, Text } from 'react-native'
 import { Button } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-
-
 const Daily = ({ navigation }) => {
 
-  let currentDate = new Date()
-  const [date, setDate] = useState(1598051730000)
+  const { getData } = useContext(DataContext)
+  
+  // useEffect(() => {
+  //   const data = getData()
+  //   console.log(data)
+  // }, [])
+
+  
+  const [date, setDate] = useState(new Date())
   const [show, setShow] = useState(false);
   
 
   const onChange = (event, date) => {
-    setDate(date);
     setShow(false)
-    
-  };
+    const dateString = JSON.stringify(date)
+    setDate(dateString)
+    //console.log(dateString)
+    getData({dateString})
   
+  }
+  //console.log(date)
 
   return (
     <View style={{flex: 1}}>
@@ -27,7 +36,7 @@ const Daily = ({ navigation }) => {
       {show && ( <DateTimePicker
           testID="dateTimePicker"
           display="default"
-          value={new Date()}
+          value={date}
           onChange={onChange}
         /> )}
       
@@ -40,7 +49,6 @@ const Daily = ({ navigation }) => {
 const styles = StyleSheet.create({
   view: {
     display: 'flex',
-    //justifyContent: 'center',
     alignItems: 'center',
     flex: 1
    
