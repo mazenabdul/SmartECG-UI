@@ -11,6 +11,13 @@ const DataContext = React.createContext()
 //Create reducer which dispatches the actions
 const dataReducer = (state, action) => {
   switch(action.type){
+    case 'daily_data':
+      return { ...state, data: action.payload, error: '' }
+    case 'clear_data':
+      return { ...state, data: [] }
+    case 'error': {
+      return { ...state, data:[], error: action.payload }
+    }
     default:
       return state 
   } 
@@ -21,11 +28,11 @@ export const DataProvider = ({ children }) => {
 
  
 //Create the reducer
-const [state, dispatch] = useReducer(dataReducer, [{ date: null }])
+const [state, dispatch] = useReducer(dataReducer, { data: [], error: '' } )
 
 
 //Create the actions here
-const getData = async ({ dateString }) => {
+const dailyData = async ({ dateString }) => {
   const token = await AsyncStorage.getItem('token')
   try {
     const res = await api.post('/daily', { dateString }, {
@@ -33,13 +40,19 @@ const getData = async ({ dateString }) => {
         'Authorization': token
       }
     })
-    console.log(res)
+   //console.log(res.data)
+    dispatch({ type: 'daily_data', payload: res.data })
   } catch (e) {
-    console.error(e)
+    dispatch({ type: 'error', payload: 'No data found' })
+    // console.log(e)
   }
 }
 
-return <DataContext.Provider value={{ getData }}>{children}</DataContext.Provider>
+const clearData = () => {
+  dispatch({ type: 'clear_data' })
+}
+
+return <DataContext.Provider value={{state, dailyData, clearData }}>{children}</DataContext.Provider>
 
 }
 

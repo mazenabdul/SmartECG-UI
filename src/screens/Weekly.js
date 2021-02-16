@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, StyleSheet, Text } from 'react-native'
+import TextHeader from '../components/TextHeader'
 
 const Weekly = () => {
   return (
     <View>
-      <Text style={styles.text}>Weekly Data</Text>
+      <TextHeader normal='Weekly' bold='Data' /> 
     </View>
   )
 }
@@ -18,14 +19,7 @@ const styles = StyleSheet.create({
    
     
   },
-  text: {
-    fontSize: 30,
-    padding: 5,
-    textAlign: 'center',
-    marginVertical: 40,
-    color: '#FFF',
-    backgroundColor: '#4B51FF'
-  },
+  
  
 })
 

@@ -8,7 +8,7 @@ const Register = ({ navigation }) => {
 
   //Context to manage registering endpoint
   const { state, newUser, localCheck } = useContext(AuthContext)
-  console.log(state.error)
+  
   
   //Check if the user is locally signed in already
   useEffect(() => {

@@ -17,11 +17,11 @@ const authReducer = (state, action) => {
     case 'clear_errors':
       return { ...state, error: undefined }
     default:
-      return state 
-  } 
+      return state
+  }
 }
 
-//Create the provider 
+//Create the provider
 export const AuthProvider = ({ children }) => {
 
 //Create the reducer
@@ -49,7 +49,6 @@ const signIn = async ({ email, password, navigation }) => {
     clearErrors()
     console.log('Signed in')
     navigation.navigate('mainFlow')
-    
   } catch (e) {
     dispatch({ type: 'add_error', payload: 'Invalid email and/or password' })
   }
@@ -59,8 +58,8 @@ const signIn = async ({ email, password, navigation }) => {
 const localCheck = async ( navigation ) => {
   const token = await AsyncStorage.getItem('token')
 
-  //if it exists, then user is already signed in 
-  if(token) { 
+  //if it exists, then user is already signed in
+  if(token) {
     dispatch({ type: 'sign_in', payload: token })
     navigation.navigate('mainFlow')
   } else {

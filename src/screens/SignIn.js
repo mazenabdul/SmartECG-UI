@@ -12,7 +12,7 @@ const SignIn = ({ navigation }) => {
 
   //Context to manage sign in
   const { state, signIn } = useContext(AuthContext)
-  console.log(state.error)
+  
   return (
 
     <View style={styles.view}>

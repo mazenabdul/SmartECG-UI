@@ -2,14 +2,16 @@ import React, { useContext } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import { Button } from 'react-native-paper'
 import AuthContext from '../context/authContext'
+import TextHeader from '../components/TextHeader'
+
 
 const Device = ({ navigation }) => {
 
   const { signOut } = useContext(AuthContext)
 
   return (
-    <View style={{flex: 1}}>
-      <Text style={styles.text}>Device Screen</Text>
+    <View style={styles.container}>
+      <TextHeader normal='Device' bold='Screen'/>
       <View  style={styles.view}>
         <Button mode='contained' style={styles.btn}>Pair my Device</Button>
         <Button mode='contained' onPress={() => signOut(navigation)} style={styles.btn}>Sign Out</Button>
@@ -19,21 +21,25 @@ const Device = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+
+  },  
   view: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
-   
-    
+    flex: 1,
   },
   text: {
     fontSize: 30,
     padding: 5,
-    textAlign: 'center',
-    marginVertical: 40,
-    color: '#FFF',
-    backgroundColor: '#4B51FF'
+    marginTop: 60,
+    marginHorizontal: 20,
+    color: '#000'
+  },
+  bold:{
+    fontWeight: 'bold'
   },
   btn: {
     marginTop: 20,

@@ -1,11 +1,12 @@
 import React from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import { Button } from 'react-native-paper'
+import TextHeader from '../components/TextHeader'
 
 const Monthly = ({ navigation }) => {
   return (
     <View style={{flex: 1}}>
-      <Text style={styles.text}>Monthly Data</Text>
+      <TextHeader normal='Monthly' bold='Data'/> 
     </View>
   )
 }
@@ -17,17 +18,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1
-   
-    
   },
-  text: {
-    fontSize: 30,
-    padding: 5,
-    textAlign: 'center',
-    marginVertical: 40,
-    color: '#FFF',
-    backgroundColor: '#4B51FF'
-  },
+ 
  
 })
 
