@@ -7,13 +7,13 @@ import TextHeader from '../components/TextHeader'
 
 const Device = ({ navigation }) => {
 
-  const { signOut } = useContext(AuthContext)
+  const { signOut, emailSend } = useContext(AuthContext)
 
   return (
     <View style={styles.container}>
       <TextHeader normal='Device' bold='Screen'/>
       <View  style={styles.view}>
-        <Button mode='contained' style={styles.btn}>Pair my Device</Button>
+        <Button mode='contained' style={styles.btn} onPress={emailSend} >Pair my Device</Button>
         <Button mode='contained' onPress={() => signOut(navigation)} style={styles.btn}>Sign Out</Button>
       </View>
     </View>

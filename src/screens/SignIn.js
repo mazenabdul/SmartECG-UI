@@ -12,14 +12,15 @@ const SignIn = ({ navigation }) => {
 
   //Context to manage sign in
   const { state, signIn } = useContext(AuthContext)
+  const { error } = state
   
   return (
 
     <View style={styles.view}>
       <Text style={styles.text}>Sign In <Entypo size={30} name='pencil'></Entypo></Text>
       <TextInput value={email} onChangeText={(text) => setEmail(text)} style={styles.input} type='outlined' placeholder='Enter an e-mail' autoCapitalize='none' autoCorrect={false}></TextInput>
-      <TextInput value={password} onChangeText={(text) => setPassword(text)} placeholder='Enter a password' autoCapitalize='none' autoCorrect={false}></TextInput>
-      {state.error !== undefined ? <Text style={styles.error}>Invalid Email and/or password</Text> : null}
+      <TextInput value={password} onChangeText={text => setPassword(text)} placeholder='Enter a password' autoCapitalize='none' autoCorrect={false}></TextInput>
+      {error !== undefined ? <Text style={styles.error}>Invalid Email and/or password</Text> : null}
       <Button mode='contained' style={styles.btn} onPress={() => signIn({ email, password, navigation })}>Sign In</Button>
       <TouchableOpacity style={styles.touch} onPress={() => navigation.navigate('Register')} >
         <Text style={{ color: '#4B51FF' }}>New user? Register here</Text>

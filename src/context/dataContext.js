@@ -40,19 +40,52 @@ const dailyData = async ({ dateString }) => {
         'Authorization': token
       }
     })
-   //console.log(res.data)
-    dispatch({ type: 'daily_data', payload: res.data })
+    //Get the last index of the array if there are multiple
+    
+      
+    const dataIndex = res.data.length-1
+      
+    //console.log(dataIndex)
+    console.log(res.data[dataIndex].voltage)
+    //console.log(res.data[0])
+    dispatch({ type: 'daily_data', payload: res.data[dataIndex] })
   } catch (e) {
     dispatch({ type: 'error', payload: 'No data found' })
     // console.log(e)
   }
 }
 
+const monthlyData = async({ input }) => {
+  const token = await AsyncStorage.getItem('token')
+  try {
+    const res = await api.post('/monthly', { input }, {
+      headers: {
+        'Authorization': token
+      } 
+    })
+    const data = res.data
+    const sorted = data.map(obj => {
+      return obj.voltage
+    })
+    const sum = [];
+
+    sorted.forEach((arr) => {
+      arr.forEach((item, index) => {
+        sum[index] = ((sum[index] ?? 0) + item) / arr.length+1
+      });
+    });
+
+    console.log(sum);
+} catch (e) {
+  console.error(e)
+}
+}
+
 const clearData = () => {
   dispatch({ type: 'clear_data' })
 }
 
-return <DataContext.Provider value={{state, dailyData, clearData }}>{children}</DataContext.Provider>
+return <DataContext.Provider value={{state, dailyData, monthlyData, clearData }}>{children}</DataContext.Provider>
 
 }
 

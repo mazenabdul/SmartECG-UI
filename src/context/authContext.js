@@ -67,6 +67,19 @@ const localCheck = async ( navigation ) => {
   }
 }
 
+//Send signed in user's email
+ const emailSend = () => {
+  console.log('Pressed')
+//   try {
+//     const res = await api.post('/user', { email, password })
+//     dispatch({ type: 'sign_in', payload: res.data.token })
+    
+//   } catch (e) {
+   
+//   }
+// }
+ }
+
 //Sign out a user
 const signOut = async ( navigation ) => {
   await AsyncStorage.removeItem('token')
@@ -78,7 +91,7 @@ const clearErrors = () => {
   dispatch({ type: 'clear_errors' })
 }
 
-return <AuthContext.Provider value={{ state, newUser, signIn, localCheck, signOut, clearErrors }}>{children}</AuthContext.Provider>
+return <AuthContext.Provider value={{ state, newUser, signIn, localCheck, signOut, emailSend, clearErrors }}>{children}</AuthContext.Provider>
 
 }
 

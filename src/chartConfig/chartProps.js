@@ -12,9 +12,4 @@ module.exports = {
       borderRadius: 26,
       padding: 20, 
     },
-    propsForDots: {
-      r: "5",
-      strokeWidth: "2",
-      stroke: "#4B51FF",
-      fill: '#FFF'
-}}
+    }
