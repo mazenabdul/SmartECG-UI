@@ -13,6 +13,8 @@ const dataReducer = (state, action) => {
   switch(action.type){
     case 'daily_data':
       return { ...state, data: action.payload, error: '' }
+    case 'monthly_data': 
+      return { ...state, data: action.payload, error: '' }
     case 'clear_data':
       return { ...state, data: [] }
     case 'error': {
@@ -55,6 +57,25 @@ const dailyData = async ({ dateString }) => {
   }
 }
 
+const weeklyData = async ({ startDate, endDate }) => {
+  
+  //Package into an object
+  const dates = { startDate, endDate }
+  const token = await AsyncStorage.getItem('token')
+  console.log(dates)
+  //Send the start and end dates to the /weekly endpoint
+  try {
+    const res = await api.post('/weekly', { dates }, {
+      headers: {
+        'Authorization': token
+      }
+    })
+  } catch (e) {
+    console.error(e)
+  }
+  
+}
+
 const monthlyData = async({ input }) => {
   const token = await AsyncStorage.getItem('token')
   try {
@@ -67,17 +88,26 @@ const monthlyData = async({ input }) => {
     const sorted = data.map(obj => {
       return obj.voltage
     })
+    
     const sum = [];
 
     sorted.forEach((arr) => {
       arr.forEach((item, index) => {
-        sum[index] = ((sum[index] ?? 0) + item) / arr.length+1
+        sum[index] = ((sum[index] ?? 0) + item) / arr.length
       });
     });
-
-    console.log(sum);
+    //console.log(sum.length)
+    //Generate dynamic time axis 
+    let time = []
+    for(let i=0;i<sum.length; i++){
+      time[i] = i
+    }
+    //console.log(time)
+    dispatch({ type: 'monthly_data', payload: { time, sum} })
+     //console.log(sum);
 } catch (e) {
   console.error(e)
+  dispatch ({ type: 'error', payload: 'No data found' })
 }
 }
 
@@ -85,7 +115,7 @@ const clearData = () => {
   dispatch({ type: 'clear_data' })
 }
 
-return <DataContext.Provider value={{state, dailyData, monthlyData, clearData }}>{children}</DataContext.Provider>
+return <DataContext.Provider value={{state, dailyData, weeklyData, monthlyData, clearData }}>{children}</DataContext.Provider>
 
 }
 

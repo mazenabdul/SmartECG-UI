@@ -16,11 +16,11 @@ const styles = StyleSheet.create({
     marginTop: 60,
     marginBottom: 20,
     marginHorizontal: 20,
-    color: '#000',
+    color: '#6200ee',
   },
   bold:{
     fontWeight: 'bold',
-    color:'#4B51FF'
+    color:'#6200ee'
   },
 })
 

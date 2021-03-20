@@ -55,7 +55,7 @@ const navigator = createSwitchNavigator({
   }, {
     tabBarOptions: {
       style: {
-        backgroundColor: '#4B51FF',
+        backgroundColor: '#6200ee',
         padding: 5
       },
       activeTintColor: '#FFF',

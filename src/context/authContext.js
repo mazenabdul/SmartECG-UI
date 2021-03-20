@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import React, { useReducer } from 'react'
 import api from '../api/backend'
+import hardware from '../api/hardware'
 
 //Create the auth context
 const AuthContext = React.createContext()
@@ -11,7 +12,7 @@ const authReducer = (state, action) => {
     case 'register_user':
       return { ...state, token: action.payload, error: '' }
     case 'sign_in':
-      return { ...state, token: action.payload, error: '' }
+      return { ...state, token: action.payload.token, email: action.payload.email , error: '' }
     case 'add_error':
       return { ...state, error: action.payload }
     case 'clear_errors':
@@ -25,7 +26,7 @@ const authReducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
 
 //Create the reducer
-const [state, dispatch] = useReducer(authReducer, [{ token: null, error: '' }])
+const [state, dispatch] = useReducer(authReducer, [{ token: null, email:'', error: '' }])
 
 //Register a new user
 const newUser = async( { email, password, navigation } ) => {
@@ -45,9 +46,9 @@ const signIn = async ({ email, password, navigation }) => {
   try {
     const res = await api.post('/signin', { email, password })
     await AsyncStorage.setItem('token', res.data.token)
-    dispatch({ type: 'sign_in', payload: res.data.token })
+    await AsyncStorage.setItem('email', res.data.email)
+    dispatch({ type: 'sign_in', payload: res.data })
     clearErrors()
-    console.log('Signed in')
     navigation.navigate('mainFlow')
   } catch (e) {
     dispatch({ type: 'add_error', payload: 'Invalid email and/or password' })
@@ -67,22 +68,26 @@ const localCheck = async ( navigation ) => {
   }
 }
 
-//Send signed in user's email
- const emailSend = () => {
-  console.log('Pressed')
-//   try {
-//     const res = await api.post('/user', { email, password })
-//     dispatch({ type: 'sign_in', payload: res.data.token })
-    
-//   } catch (e) {
-   
-//   }
-// }
- }
-
+//Send signed in user's email to Flask Backend
+ const emailSend = async (email) => {
+  try {
+    let localEmail
+    if(AsyncStorage.getItem('email')){
+      localEmail = await AsyncStorage.getItem('email')
+      const hardwareSignal = await hardware.post('/email',  { localEmail } ) 
+    } else {
+      localEmail = email
+      const hardwareSignal = await hardware.post('/email', { localEmail })
+    }
+  } catch (e) {
+    dispatch({ type: 'add_error', payload: 'Please check your internet connection' })
+  }
+}
+ 
 //Sign out a user
 const signOut = async ( navigation ) => {
   await AsyncStorage.removeItem('token')
+  await AsyncStorage.removeItem('email')
   navigation.navigate('authFlow')
 }
 

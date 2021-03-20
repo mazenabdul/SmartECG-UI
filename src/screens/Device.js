@@ -7,13 +7,13 @@ import TextHeader from '../components/TextHeader'
 
 const Device = ({ navigation }) => {
 
-  const { signOut, emailSend } = useContext(AuthContext)
+  const { state, signOut, emailSend } = useContext(AuthContext)
 
   return (
     <View style={styles.container}>
       <TextHeader normal='Device' bold='Screen'/>
       <View  style={styles.view}>
-        <Button mode='contained' style={styles.btn} onPress={emailSend} >Pair my Device</Button>
+        <Button mode='contained' style={styles.btn} onPress={() => emailSend(state.email)} >Pair my Device</Button>
         <Button mode='contained' onPress={() => signOut(navigation)} style={styles.btn}>Sign Out</Button>
       </View>
     </View>
@@ -23,6 +23,7 @@ const Device = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f6f6f6'
 
   },  
   view: {
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     padding: 5,
     marginTop: 60,
     marginHorizontal: 20,
-    color: '#000'
+    color: '#fff'
   },
   bold:{
     fontWeight: 'bold'
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 80,
     width: 300,
-    backgroundColor: '#4B51FF',
+    backgroundColor: '#6200ee',
     padding: 15,
     
   }

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
 import DataContext from '../context/dataContext'
-import { View, StyleSheet, Text, Dimensions } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, ScrollView } from 'react-native'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TextHeader from '../components/TextHeader'
 import { LineChart } from "react-native-chart-kit";
-import chartProps from '../chartConfig/chartProps'
+import chartProps, { style } from '../chartConfig/chartProps'
 
 
 const Daily = ({ navigation }) => {
@@ -18,10 +18,11 @@ const Daily = ({ navigation }) => {
 
   //State variables for date widget
   const [date, setDate] = useState(new Date())
+  const [displayDate, setDisplayDate] = useState('')
   const [show, setShow] = useState(false);
   const [data, setData] = useState( null )
   const [loading, SetLoading] = useState(false)
-  const time = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ 
 
   //Chart Requirements
 
@@ -37,6 +38,7 @@ const Daily = ({ navigation }) => {
     dailyData({ dateString })
     SetLoading(false)
     setDate(new Date())
+    setDisplayDate(dateString)
     // setData(res)
   }
   
@@ -47,6 +49,9 @@ const Daily = ({ navigation }) => {
       <TextHeader normal='Daily' bold='Data'/>
       <View style={styles.view}>
       <Button mode='contained' style={styles.btn} onPress={() => setShow(!show)} >Select Timeframe</Button>
+      <View style={styles.textContainer}>
+      <Text style={styles.text}>Data as of: {displayDate}</Text>
+      </View>
       
       {show && ( <DateTimePicker
           testID="dateTimePicker"
@@ -55,20 +60,33 @@ const Daily = ({ navigation }) => {
           onChange={onChange}
           
         /> )}
-      
-      { state.data.voltage  &&  <LineChart 
-        data={{labels: state.data.time, datasets: [{ data: state.data.voltage }]}} 
-        width={screenWidth}
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <View style={styles.graphView}>
+      { state.data.voltage  && <LineChart 
+        data={{ datasets: [{ data: state.data.voltage }]}} 
+        width={850}
         height={330}  
         yAxisSuffix="V" 
         yAxisInterval={1} 
         chartConfig={chartProps}
         bezier
-        style={{ marginVertical: 20, padding: 30, borderRadius: 16, }}/> }
+        style={{ marginTop:10,   borderRadius: 16,shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 3,
+        },
+        shadowOpacity: 0.29,
+        shadowRadius: 4.65,
         
-        {state.error === 'No data found' && <Text>No data for selected date! Try again</Text>}
-        <ActivityIndicator animating={loading} size='large'  />
+        elevation: 7, }}/> }
+        </View>
+        
+        {state.error === 'No data found' && <Text style={styles.text}>No data for selected date! Try again</Text>}
+        </ScrollView>
+        
+        
       </View>
+      
     </View>
     
   )
@@ -79,13 +97,26 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flex: 1,
-    padding: 25
-  
+  },
+  graphView:{
+    padding: 10
   },
   btn: {
-    backgroundColor: '#4B51FF',
+    backgroundColor: '#6200ee',
     padding: 5,
-    marginBottom: 10
+    marginVertical: 10
+  },
+  textContainer:{
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginRight: 'auto',
+    marginTop: 20
+  },
+  text: {
+    fontSize: 17,
+    fontStyle: 'italic',
+    marginLeft: 20
   }
 
 })
