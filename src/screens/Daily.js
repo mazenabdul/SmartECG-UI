@@ -65,6 +65,7 @@ const Daily = ({ navigation }) => {
         yAxisInterval={1} 
         chartConfig={chartProps}
         bezier
+        withInnerLines={false}
         style={{ marginTop:10,   borderRadius: 16,shadowColor: "#000",
         shadowOffset: {
           width: 0,

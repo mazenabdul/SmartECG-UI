@@ -33,7 +33,7 @@ const Monthly = ({ navigation }) => {
         <TextInput style={{ marginTop: 20, width: 150 }} mode='outlined' placeholder='Ex. 2021' label='Enter a Year' value={year} onChangeText={year => setYear(year)}/>
       </View> 
       <View style={styles.btnView}>
-        <Button mode='contained' style={styles.btn} onPress={() => inputValidator({ month, year }) }>Calculate Data</Button>
+        <Button mode='contained' style={styles.btn} onPress={() => inputValidator({ month, year }) }>Calculate!</Button>
       </View>
       <View style={styles.message}>
           {state.data.sum === undefined || state.data.sum.length===0 && <Text style={styles.err}>No data for selected month! Try Again!</Text>}
@@ -41,13 +41,14 @@ const Monthly = ({ navigation }) => {
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View>
           { state.data.sum !== undefined && state.data.sum.length>0  &&  <LineChart 
-          data={{labels: state.data.time, datasets: [{ data: state.data.sum }]}} 
+          data={{datasets: [{ data: state.data.sum }]}} 
           width={600}
           height={330}  
           yAxisSuffix="V" 
           yAxisInterval={1} 
           chartConfig={chartProps}
           bezier
+          withInnerLines={false}
           style={{ 
             marginTop:30,   borderRadius: 16,shadowColor: "#000",
             shadowOffset: {
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 25
+    marginTop: 20
   },
   text: {
     marginHorizontal: 30,

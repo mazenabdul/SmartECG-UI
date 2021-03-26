@@ -2,7 +2,7 @@
 module.exports = {
   backgroundGradientFrom: "#FFF",
     backgroundGradientTo: "#FFF",
-   // fillShadowGradient: '#FFF',
+    fillShadowGradient: '#4d31cf',
     //fillShadowGradientOpacity:1,
     strokeWidth:4,
     decimalPlaces: 0, 
@@ -14,6 +14,5 @@ module.exports = {
     },
     propsForDots: {
       r: '1',
-      
     }
     }

@@ -46,6 +46,7 @@ const Weekly  = () => {
 
     <View style={{ flex: 1 }}>
       <TextHeader normal='Weekly' bold='Data' />
+      
       <View style={styles.viewBtn}>
         <TouchableOpacity   onPress={() => setShowStart(!showStart)}><Text style={styles.touch}>Start Date</Text></TouchableOpacity>
         <TouchableOpacity  onPress={() => setShowEnd(!showEnd)}><Text style={styles.touch}>End Date</Text></TouchableOpacity>
@@ -55,8 +56,9 @@ const Weekly  = () => {
         <Text>{JSON.stringify(endDate).slice(1,11)}</Text>
       </View>
       <View style={styles.viewBtn}>
-        <Button mode='contained' onPress={() => weeklyData({ startDate, endDate })}>Calculate!</Button>
+        <Button style={{ marginTop: 20, padding: 5 }} mode='contained' onPress={() => weeklyData({ startDate, endDate })}>Calculate!</Button>
       </View>
+      
         {showStart && ( <DateTimePicker
           testID="dateTimePicker"
           display="default"
@@ -83,6 +85,7 @@ const Weekly  = () => {
         yAxisInterval={1} 
         chartConfig={chartProps}
         bezier
+        withInnerLines={false}
         style={{ marginTop:10,   borderRadius: 16,shadowColor: "#000",
         shadowOffset: {
           width: 0,
@@ -108,32 +111,32 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flex: 1,
-    padding: 20
-  
   },
+  
   viewBtn: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-evenly', 
-    marginTop: 20
+    
   },
   btn: {
     backgroundColor: '#6200ee',
     marginHorizontal: 30,
-    padding: 5
-   
+
   },
   selectionView: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    marginTop: 10,
+    marginHorizontal: 'auto'
     
   },
   touch: {
     color: '#6200ee',
-    margin: 10,
-    fontSize: 20
-  },
+    fontSize: 20,
+    marginTop: 5
+    },
   graphView:{
     padding: 10
   },
