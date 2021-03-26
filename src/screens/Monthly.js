@@ -5,7 +5,7 @@ import TextHeader from '../components/TextHeader'
 import { TextInput } from 'react-native-paper'
 import { Dimensions } from "react-native"
 import DataContext from '../context/dataContext'
-import chartProps from '../chartConfig/chartProps'
+import chartProps, { style } from '../chartConfig/chartProps'
 import { LineChart } from 'react-native-chart-kit'
 
 
@@ -24,7 +24,7 @@ const Monthly = ({ navigation }) => {
     monthlyData({ input })
   }
 
-  console.log(state.data.sum)
+  console.log(state.data)
   return (
     <View style={{flex: 1}}>
       <TextHeader normal='Monthly' bold='Data'/>
@@ -33,11 +33,14 @@ const Monthly = ({ navigation }) => {
         <TextInput style={{ marginTop: 20, width: 150 }} mode='outlined' placeholder='Ex. 2021' label='Enter a Year' value={year} onChangeText={year => setYear(year)}/>
       </View> 
       <View style={styles.btnView}>
-        <Button mode='contained' style={styles.btn} onPress={() => inputValidator({ month, year }) } loading={loading}>Calculate Data</Button>
+        <Button mode='contained' style={styles.btn} onPress={() => inputValidator({ month, year }) }>Calculate Data</Button>
       </View>
+      <View style={styles.message}>
+          {state.data.sum === undefined || state.data.sum.length===0 && <Text style={styles.err}>No data for selected month! Try Again!</Text>}
+        </View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View>
-          { state.data.sum !== undefined &&  <LineChart 
+          { state.data.sum !== undefined && state.data.sum.length>0  &&  <LineChart 
           data={{labels: state.data.time, datasets: [{ data: state.data.sum }]}} 
           width={600}
           height={330}  
@@ -54,8 +57,11 @@ const Monthly = ({ navigation }) => {
             shadowOpacity: 0.29,
             shadowRadius: 4.65,
             elevation: 7, }}/>} 
+            
         </View>
+       
       </ScrollView>
+      
     </View>
   )
 }
@@ -84,6 +90,17 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginTop: 10,
     fontStyle: 'italic'
+  },
+  err: {
+    fontSize: 17,
+    fontStyle: 'italic',
+    
+  },
+  message: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
  
 })

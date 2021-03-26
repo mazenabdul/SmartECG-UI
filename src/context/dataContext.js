@@ -12,9 +12,11 @@ const DataContext = React.createContext()
 const dataReducer = (state, action) => {
   switch(action.type){
     case 'daily_data':
-      return { ...state, data: action.payload, error: '' }
+      return { ...state, data: action.payload}
+    case 'weekly_data': 
+      return { ...state, data: action.payload}
     case 'monthly_data': 
-      return { ...state, data: action.payload, error: '' }
+      return { ...state, data: action.payload}
     case 'clear_data':
       return { ...state, data: [] }
     case 'error': {
@@ -48,8 +50,9 @@ const dailyData = async ({ dateString }) => {
     const dataIndex = res.data.length-1
       
     //console.log(dataIndex)
-    console.log(res.data[dataIndex].voltage)
+    //console.log(res.data[dataIndex].voltage)
     //console.log(res.data[0])
+    console.log(res.data)
     dispatch({ type: 'daily_data', payload: res.data[dataIndex] })
   } catch (e) {
     dispatch({ type: 'error', payload: 'No data found' })
@@ -70,8 +73,31 @@ const weeklyData = async ({ startDate, endDate }) => {
         'Authorization': token
       }
     })
+   
+    const sorted = res.data.map(obj => {
+      return obj.voltage
+    })
+
+    const sum = [];
+
+    sorted.forEach((arr) => {
+      arr.forEach((item, index) => {
+        
+         sum[index] = ((sum[index] ?? 0) + item) / arr.length
+      });
+    });
+    //console.log(sum.length)
+    //Generate dynamic time axis 
+    let time = []
+    for(let i=0;i<sum.length; i++){
+      time[i] = i
+    }
+
+    //console.log(sum)
+    dispatch({ type: 'weekly_data', payload: sum })
   } catch (e) {
     console.error(e)
+    dispatch({ type: 'error', payload: 'No data found for specified range' })
   }
   
 }

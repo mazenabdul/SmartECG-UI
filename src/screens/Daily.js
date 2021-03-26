@@ -5,16 +5,12 @@ import { Button, ActivityIndicator } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TextHeader from '../components/TextHeader'
 import { LineChart } from "react-native-chart-kit";
-import chartProps, { style } from '../chartConfig/chartProps'
+import chartProps from '../chartConfig/chartProps'
 
 
 const Daily = ({ navigation }) => {
 
   const { state, dailyData, clearData } = useContext(DataContext)
-
-  // useEffect(() => {
-  //   clearData()
-  // }, [])
 
   //State variables for date widget
   const [date, setDate] = useState(new Date())
@@ -41,9 +37,7 @@ const Daily = ({ navigation }) => {
     setDisplayDate(dateString)
     // setData(res)
   }
-  
-//console.log(state)
-
+  console.log(state.data)
   return (
     <View style={{flex: 1}}>
       <TextHeader normal='Daily' bold='Data'/>
@@ -60,9 +54,10 @@ const Daily = ({ navigation }) => {
           onChange={onChange}
           
         /> )}
+      {/* {state.error.length > 0 || state.error !== undefined && <Text style={styles.text}>No data for selected date! Try again</Text>}  */}
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
       <View style={styles.graphView}>
-      { state.data.voltage  && <LineChart 
+      { state.data.voltage &&  <LineChart 
         data={{ datasets: [{ data: state.data.voltage }]}} 
         width={850}
         height={330}  
@@ -78,10 +73,11 @@ const Daily = ({ navigation }) => {
         shadowOpacity: 0.29,
         shadowRadius: 4.65,
         
-        elevation: 7, }}/> }
-        </View>
+        elevation: 7, }}/>   }
+     
         
-        {state.error === 'No data found' && <Text style={styles.text}>No data for selected date! Try again</Text>}
+     
+        </View>
         </ScrollView>
         
         
