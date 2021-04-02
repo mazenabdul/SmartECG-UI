@@ -7,6 +7,7 @@ import { TouchableOpacity } from "react-native-gesture-handler"
 import DataContext from '../context/dataContext'
 import { LineChart } from "react-native-chart-kit"
 import chartProps from '../chartConfig/chartProps'
+import Analytics from '../components/Analytics'
 
 const Weekly  = () => {
 
@@ -46,7 +47,6 @@ const Weekly  = () => {
 
     <View style={{ flex: 1 }}>
       <TextHeader normal='Weekly' bold='Data' />
-      
       <View style={styles.viewBtn}>
         <TouchableOpacity   onPress={() => setShowStart(!showStart)}><Text style={styles.touch}>Start Date</Text></TouchableOpacity>
         <TouchableOpacity  onPress={() => setShowEnd(!showEnd)}><Text style={styles.touch}>End Date</Text></TouchableOpacity>
@@ -86,21 +86,15 @@ const Weekly  = () => {
         chartConfig={chartProps}
         bezier
         withInnerLines={false}
-        style={{ marginTop:10,   borderRadius: 16,shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 3,
-        },
+        style={{ marginTop:0,   borderRadius: 16,shadowColor: "#000", shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.29,
         shadowRadius: 4.65,
-        
         elevation: 7, }}/>   }
-       
-       
-        </View>
-        </ScrollView>
-      
-      
+      </View>
+    </ScrollView>
+    <View>
+      <Analytics />
+    </View>
     </View>
   )
 }
@@ -151,8 +145,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20
-    
+
   },
+  analyticContainer:{
+    marginTop: 0
+  }
+  
 });
 
 export default Weekly

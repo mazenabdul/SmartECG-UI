@@ -7,6 +7,7 @@ import { Dimensions } from "react-native"
 import DataContext from '../context/dataContext'
 import chartProps, { style } from '../chartConfig/chartProps'
 import { LineChart } from 'react-native-chart-kit'
+import Analytics from '../components/Analytics'
 
 
 const Monthly = ({ navigation }) => {
@@ -29,8 +30,8 @@ const Monthly = ({ navigation }) => {
     <View style={{flex: 1}}>
       <TextHeader normal='Monthly' bold='Data'/>
       <View style={styles.view}>
-        <TextInput style={{ marginTop: 20, width: 150 }} mode='outlined' placeholder='Ex. 01 for Jan' label='Enter a month' value={month} onChangeText={month => setMonth(month)}/>
-        <TextInput style={{ marginTop: 20, width: 150 }} mode='outlined' placeholder='Ex. 2021' label='Enter a Year' value={year} onChangeText={year => setYear(year)}/>
+        <TextInput style={{ marginTop: 12, width: 150 }} mode='outlined' placeholder='Ex. 01 for Jan' label='Enter a month' value={month} onChangeText={month => setMonth(month)}/>
+        <TextInput style={{ marginTop: 12, width: 150 }} mode='outlined' placeholder='Ex. 2021' label='Enter a Year' value={year} onChangeText={year => setYear(year)}/>
       </View> 
       <View style={styles.btnView}>
         <Button mode='contained' style={styles.btn} onPress={() => inputValidator({ month, year }) }>Calculate!</Button>
@@ -39,18 +40,18 @@ const Monthly = ({ navigation }) => {
           {state.data.sum === undefined || state.data.sum.length===0 && <Text style={styles.err}>No data for selected month! Try Again!</Text>}
         </View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        <View>
+        <View style={styles.graphView}>
           { state.data.sum !== undefined && state.data.sum.length>0  &&  <LineChart 
           data={{datasets: [{ data: state.data.sum }]}} 
           width={600}
-          height={330}  
+          height={300}  
           yAxisSuffix="V" 
           yAxisInterval={1} 
           chartConfig={chartProps}
           bezier
           withInnerLines={false}
           style={{ 
-            marginTop:30,   borderRadius: 16,shadowColor: "#000",
+            marginTop:30, borderRadius: 16,shadowColor: "#000",
             shadowOffset: {
               width: 0,
               height: 3,
@@ -62,7 +63,7 @@ const Monthly = ({ navigation }) => {
         </View>
        
       </ScrollView>
-      
+        {state.data.sum !== undefined && state.data.sum.length>0 && <Analytics /> }
     </View>
   )
 }
@@ -77,14 +78,14 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#6200ee',
     padding: 5,
-    marginBottom: 10,
+    marginTop: 12
    
   },
   btnView: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20
+    marginTop: 8
   },
   text: {
     marginHorizontal: 30,
@@ -102,7 +103,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
-  }
+  },
+  graphView:{
+    padding: 10,
+  },
  
 })
 

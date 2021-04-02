@@ -45,15 +45,37 @@ const dailyData = async ({ dateString }) => {
       }
     })
     //Get the last index of the array if there are multiple
-    
-      
     const dataIndex = res.data.length-1
       
-    //console.log(dataIndex)
-    //console.log(res.data[dataIndex].voltage)
-    //console.log(res.data[0])
-    console.log(res.data)
-    dispatch({ type: 'daily_data', payload: res.data[dataIndex] })
+  
+    //Create R-R array with 2 values of selected voltage date. 2nd occurance of high - 1st occurance of high
+
+    let voltages = res.data[dataIndex].voltage 
+    //const results = []
+    let firstIndex = voltages.indexOf(Math.max(...voltages))
+    
+    
+    //console.log(firstIndex)
+
+    //Based on this index, start a for loop with a buffer of +100 and find the next max
+    let max=0
+    for(let i=(firstIndex+100); i<voltages.length; i++){
+      if(voltages[i] > max){
+        max = voltages[i]
+        
+      }
+      
+    }
+    //Based on the returned max, find the index at which it occurs
+    let secondIndex = voltages.findIndex(value => value === max)
+    //console.log(secondIndex)
+
+    //Push the voltage array and min/max index object
+    let results = {voltages, secondIndex, firstIndex }
+
+    //console.log(results[0])
+
+    dispatch({ type: 'daily_data', payload: results })
   } catch (e) {
     dispatch({ type: 'error', payload: 'No data found' })
     // console.log(e)
@@ -104,6 +126,7 @@ const weeklyData = async ({ startDate, endDate }) => {
 
 const monthlyData = async({ input }) => {
   const token = await AsyncStorage.getItem('token')
+  console.log(input)
   try {
     const res = await api.post('/monthly', { input }, {
       headers: {
@@ -136,6 +159,7 @@ const monthlyData = async({ input }) => {
   dispatch ({ type: 'error', payload: 'No data found' })
 }
 }
+
 
 const clearData = () => {
   dispatch({ type: 'clear_data' })

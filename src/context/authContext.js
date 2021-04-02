@@ -74,8 +74,9 @@ const localCheck = async ( navigation ) => {
     let localEmail
     if(AsyncStorage.getItem('email')){
       localEmail = await AsyncStorage.getItem('email')
+      console.log(localEmail)
       const hardwareSignal = await hardware.post('/email',  { localEmail } ) 
-      console.log('sent')
+      
     } else {
       localEmail = email
       const hardwareSignal = await hardware.post('/email', { localEmail })
