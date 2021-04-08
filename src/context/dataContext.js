@@ -12,15 +12,53 @@ const DataContext = React.createContext()
 const dataReducer = (state, action) => {
   switch(action.type){
     case 'daily_data':
-      return { ...state, data: action.payload}
+      return { ...state, 
+        data: action.payload.voltages, 
+        firstIndex: action.payload.calculation.firstIndex, 
+        secondIndex: action.payload.calculation.secondIndex, 
+        BPM: action.payload.BPM,
+        error: '',
+        showData: true,
+     
+      
+        }
     case 'weekly_data': 
-      return { ...state, data: action.payload}
+      return { ...state,  
+        data: action.payload.sum, 
+        firstIndex: action.payload.calculation.firstIndex, 
+        secondIndex: action.payload.calculation.secondIndex, 
+        BPM: action.payload.averagedBPMs,
+        error: '',
+        showData: true
+        }
     case 'monthly_data': 
-      return { ...state, data: action.payload}
-    case 'clear_data':
-      return { ...state, data: [] }
+      return { ...state,  
+        data: action.payload.sum, 
+        firstIndex: action.payload.calculation.firstIndex, 
+        secondIndex: action.payload.calculation.secondIndex, 
+        BPM: action.payload.averagedBPMs,
+        error: '',
+        showData: true
+        }
     case 'error': {
-      return { ...state, data:[], error: action.payload }
+      return { ...state,  
+        data: [], 
+        firstIndex: null, 
+        secondIndex: null, 
+        BPM: 0,
+        error: true
+        }
+
+    }
+    case 'clear_data': {
+      return { ...state,  
+        data: [], 
+        firstIndex: null, 
+        secondIndex: null, 
+        BPM: 0,
+        error: false,
+        showData: false
+        }
     }
     default:
       return state 
@@ -30,10 +68,49 @@ const dataReducer = (state, action) => {
 //Create the provider 
 export const DataProvider = ({ children }) => {
 
+  //Create the initial state 
+  const initialState = { 
+    data: [],
+    BPM: 0,
+    firstIndex: null,
+    secondIndex: null,
+    error: false,
+  }
  
 //Create the reducer
-const [state, dispatch] = useReducer(dataReducer, { data: [], error: '' } )
+const [state, dispatch] = useReducer(dataReducer,  {initialState}  )
 
+
+//Create a helper function to calculate R-R Intervals
+const calculateRinterval = (voltages) => {
+  let firstIndex = voltages.indexOf(Math.max(...voltages))
+
+  let max=0
+  for(let i=(firstIndex+100); i<voltages.length; i++){
+    if(voltages[i] > max){
+      max = voltages[i]
+        
+    }  
+  }
+
+  //Based on the returned max, find the index at which it occurs
+  let secondIndex = voltages.findIndex(value => value === max)
+    
+  //Push the voltage array and min/max index object
+  let results = {secondIndex, firstIndex}
+
+  return results
+}
+
+//Compute BPM average 
+const averageBPM = (data) => {
+  const BPMs = data.map((obj) => { return obj.heartRate })
+
+  //Find average of BPM array
+  const averageBPM = BPMs.reduce((a, b) => a + b) / BPMs.length
+  
+  return averageBPM
+}
 
 //Create the actions here
 const dailyData = async ({ dateString }) => {
@@ -49,36 +126,18 @@ const dailyData = async ({ dateString }) => {
       
   
     //Create R-R array with 2 values of selected voltage date. 2nd occurance of high - 1st occurance of high
+    let voltages = res.data[dataIndex].voltage  
+    const calculation = calculateRinterval(voltages)
 
-    let voltages = res.data[dataIndex].voltage 
-    //const results = []
-    let firstIndex = voltages.indexOf(Math.max(...voltages))
+    //Fetch the BPM
+    const BPM = res.data[dataIndex].heartRate
+
+    let results = { voltages, calculation, BPM  }
     
-    
-    //console.log(firstIndex)
-
-    //Based on this index, start a for loop with a buffer of +100 and find the next max
-    let max=0
-    for(let i=(firstIndex+100); i<voltages.length; i++){
-      if(voltages[i] > max){
-        max = voltages[i]
-        
-      }
-      
-    }
-    //Based on the returned max, find the index at which it occurs
-    let secondIndex = voltages.findIndex(value => value === max)
-    //console.log(secondIndex)
-
-    //Push the voltage array and min/max index object
-    let results = {voltages, secondIndex, firstIndex }
-
-    //console.log(results[0])
-
     dispatch({ type: 'daily_data', payload: results })
   } catch (e) {
-    dispatch({ type: 'error', payload: 'No data found' })
-    // console.log(e)
+    dispatch({ type: 'error' })
+   
   }
 }
 
@@ -87,7 +146,7 @@ const weeklyData = async ({ startDate, endDate }) => {
   //Package into an object
   const dates = { startDate, endDate }
   const token = await AsyncStorage.getItem('token')
-  console.log(dates)
+  
   //Send the start and end dates to the /weekly endpoint
   try {
     const res = await api.post('/weekly', { dates }, {
@@ -108,18 +167,22 @@ const weeklyData = async ({ startDate, endDate }) => {
          sum[index] = ((sum[index] ?? 0) + item) / arr.length
       });
     });
-    //console.log(sum.length)
+    
     //Generate dynamic time axis 
     let time = []
     for(let i=0;i<sum.length; i++){
       time[i] = i
     }
 
-    //console.log(sum)
-    dispatch({ type: 'weekly_data', payload: sum })
+    const calculation = calculateRinterval(sum)
+    const averagedBPMs = averageBPM(res.data)
+    
+    let results = { sum, calculation, averagedBPMs  }
+
+    dispatch({ type: 'weekly_data', payload: results })
   } catch (e) {
     console.error(e)
-    dispatch({ type: 'error', payload: 'No data found for specified range' })
+    dispatch({ type: 'error'})
   }
   
 }
@@ -133,8 +196,8 @@ const monthlyData = async({ input }) => {
         'Authorization': token
       } 
     })
-    const data = res.data
-    const sorted = data.map(obj => {
+    
+    const sorted = res.data.map(obj => {
       return obj.voltage
     })
     
@@ -145,18 +208,16 @@ const monthlyData = async({ input }) => {
         sum[index] = ((sum[index] ?? 0) + item) / arr.length
       });
     });
-    //console.log(sum.length)
-    //Generate dynamic time axis 
-    let time = []
-    for(let i=0;i<sum.length; i++){
-      time[i] = i
-    }
-    //console.log(time)
-    dispatch({ type: 'monthly_data', payload: { time, sum} })
+   
+   
+    const calculation = calculateRinterval(sum)
+    const averagedBPMs = averageBPM(res.data)
+    let results = { sum, calculation, averagedBPMs }
+    dispatch({ type: 'monthly_data', payload: results })
      //console.log(sum);
 } catch (e) {
   console.error(e)
-  dispatch ({ type: 'error', payload: 'No data found' })
+  dispatch ({ type: 'error' })
 }
 }
 

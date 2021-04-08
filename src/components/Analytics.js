@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import { Ionicons, Fontisto } from 'react-native-vector-icons'
 import DataContext from '../context/dataContext'
 
-const Analytics = ( {heartRate, rInterval } ) => {
+const Analytics = ({heartRate, rInterval}) => {
 
  
   return (
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height:100,
     width:380,
-    marginBottom:20,
+    marginBottom:15,
     marginLeft:14,
     borderRadius:5,
     borderTopColor: '#000',

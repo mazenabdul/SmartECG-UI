@@ -1,13 +1,14 @@
 import React, { useState, useContext } from 'react'
+import { NavigationEvents } from 'react-navigation'
 import { View, StyleSheet, Text, ScrollView } from 'react-native'
 import { Button } from 'react-native-paper'
 import TextHeader from '../components/TextHeader'
 import { TextInput } from 'react-native-paper'
-import { Dimensions } from "react-native"
 import DataContext from '../context/dataContext'
 import chartProps, { style } from '../chartConfig/chartProps'
 import { LineChart } from 'react-native-chart-kit'
 import Analytics from '../components/Analytics'
+import ContentLoader, { Rect } from "react-content-loader/native"
 
 
 const Monthly = ({ navigation }) => {
@@ -16,16 +17,19 @@ const Monthly = ({ navigation }) => {
   const [month, setMonth] = useState('')
   const [year, setYear] = useState('')
   const [loading, setLoading] = useState(false)
+  const [rInterval, setRinterval] = useState([])
 
-  const { state, monthlyData } = useContext(DataContext)
+  const { state, monthlyData, clearData } = useContext(DataContext)
+  const { data, showData, error, secondIndex, firstIndex, BPM } = state
   
+
   const inputValidator = ({ month, year }) => {
     setLoading(!loading)
     const input = `${year}-${month}`
     monthlyData({ input })
+    
   }
 
-  console.log(state.data)
   return (
     <View style={{flex: 1}}>
       <TextHeader normal='Monthly' bold='Data'/>
@@ -37,20 +41,21 @@ const Monthly = ({ navigation }) => {
         <Button mode='contained' style={styles.btn} onPress={() => inputValidator({ month, year }) }>Calculate!</Button>
       </View>
       <View style={styles.message}>
-          {state.data.sum === undefined || state.data.sum.length===0 && <Text style={styles.err}>No data for selected month! Try Again!</Text>}
+          {/* {state.data === undefined || state.data.voltages===0 && <Text style={styles.err}>No data for selected month! Try Again!</Text>} */}
         </View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={styles.graphView}>
-          { state.data.sum !== undefined && state.data.sum.length>0  &&  <LineChart 
-          data={{datasets: [{ data: state.data.sum }]}} 
-          width={600}
-          height={300}  
-          yAxisSuffix="V" 
-          yAxisInterval={1} 
-          chartConfig={chartProps}
-          bezier
-          withInnerLines={false}
-          style={{ 
+        <NavigationEvents onWillBlur={() => { clearData() }} />
+          { (data && !error && showData) ? <LineChart 
+            data={{datasets: [{ data: data }]}} 
+            width={600}
+            height={300}  
+            yAxisSuffix="V" 
+            yAxisInterval={1} 
+            chartConfig={chartProps}
+            bezier
+            withInnerLines={false}
+            style={{ 
             marginTop:30, borderRadius: 16,shadowColor: "#000",
             shadowOffset: {
               width: 0,
@@ -58,12 +63,23 @@ const Monthly = ({ navigation }) => {
             },
             shadowOpacity: 0.29,
             shadowRadius: 4.65,
-            elevation: 7, }}/>} 
+            elevation: 7, }}/> : <ContentLoader 
+            speed={1}
+            width={340}
+            height={700}
+            viewBox="0 0 340 700"
+            backgroundColor="#f5f5f5"
+            foregroundColor="#e8e8fd">
+            <Rect x="176" y="251" rx="100" ry="100" width="1" height="1" /> 
+            <Rect x="108" y="138" rx="100" ry="100" width="2" height="2" /> 
+            <Rect x="50" y="30" rx="50" ry="50" width="280" height="266" /> 
+            <Rect x="50" y="330" rx="0" ry="0" width="280" height="95" />
+          </ContentLoader>} 
             
         </View>
        
       </ScrollView>
-        {state.data.sum !== undefined && state.data.sum.length>0 && <Analytics /> }
+         {(data && !error && showData) && <Analytics rInterval={(secondIndex - firstIndex)*0.004} heartRate={Math.floor(BPM)} />} 
     </View>
   )
 }
