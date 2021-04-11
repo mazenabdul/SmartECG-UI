@@ -10,12 +10,13 @@ import { LineChart } from "react-native-chart-kit"
 import chartProps from '../chartConfig/chartProps'
 import Analytics from '../components/Analytics'
 import ContentLoader, { Rect } from "react-content-loader/native"
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView'
 
 const Weekly  = () => {
 
   //Consume context from provider
   const { state, weeklyData, clearData } = useContext(DataContext)
-  const { data, error, showData, secondIndex, firstIndex, BPM } = state
+  const { data, error, showData, secondIndex, firstIndex, BPM, breathingRate } = state
 
   //Start date state
   const [startDate, setStartDate] = useState(new Date())
@@ -54,7 +55,7 @@ const Weekly  = () => {
         <Text>{JSON.stringify(endDate).slice(1,11)}</Text>
       </View>
       <View style={styles.viewBtn}>
-        <Button style={{ marginTop: 20, padding: 5 }} mode='contained' onPress={() => weeklyData({ startDate, endDate })}>Calculate!</Button>
+        <Button style={styles.btn} mode='contained' onPress={() => weeklyData({ startDate, endDate })}>Calculate!</Button>
       </View>
       
         {showStart && ( <DateTimePicker
@@ -74,7 +75,13 @@ const Weekly  = () => {
         </View>
 
     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-      <View style={styles.graphView}>
+      <ReactNativeZoomableView 
+          minZoom={1}
+          maxZoom={1.5}
+          zoomStep={0.5}
+          initialZoom={1}
+          bindToBorders={true}  
+          style={styles.graphView}>
       { (data && !error && showData) ?  <LineChart 
         data={{ datasets: [{ data: data}]}} 
         width={850}
@@ -84,10 +91,10 @@ const Weekly  = () => {
         chartConfig={chartProps}
         bezier
         withInnerLines={false}
-        style={{ marginTop:0,   borderRadius: 16,shadowColor: "#000", shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.29,
-        shadowRadius: 4.65,
-        elevation: 7, }}/> : <ContentLoader 
+        style={{ marginTop:0, borderRadius: 16,shadowColor: "#000", shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.29,
+          shadowRadius: 4.65,
+          elevation: 7, }}/> : <ContentLoader 
         speed={1}
         width={340}
         height={700}
@@ -96,13 +103,16 @@ const Weekly  = () => {
         foregroundColor="#e8e8fd">
         <Rect x="176" y="251" rx="100" ry="100" width="1" height="1" /> 
         <Rect x="108" y="138" rx="100" ry="100" width="2" height="2" /> 
-        <Rect x="55" y="15" rx="50" ry="50" width="280" height="266" /> 
-        <Rect x="50" y="330" rx="0" ry="0" width="320" height="95" />
+        <Rect x="55" y="150" rx="50" ry="50" width="280" height="266" /> 
+        <Rect x="50" y="450" rx="0" ry="0" width="330" height="95" />
       </ContentLoader>  }
-      </View>
+      </ReactNativeZoomableView>
     </ScrollView>
     <View>
-      {(data && !error && showData) && <Analytics heartRate={Math.floor(BPM)} rInterval={(secondIndex - firstIndex)*0.004} /> }
+      {(data && !error && showData) && <Analytics 
+        heartRate={Math.floor(BPM)} 
+        rInterval={(secondIndex - firstIndex)*0.004}
+        breathingRate={Math.floor(60*breathingRate)} /> }
     </View>
     </View>
   )
@@ -125,6 +135,19 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#6200ee',
     marginHorizontal: 30,
+    borderRadius: 15,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+
+    elevation: 30,
+    marginTop: 20, 
+    padding: 5
 
   },
   selectionView: {

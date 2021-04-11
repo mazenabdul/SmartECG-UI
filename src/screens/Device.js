@@ -48,6 +48,17 @@ const styles = StyleSheet.create({
     width: 300,
     backgroundColor: '#6200ee',
     padding: 15,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+
+    elevation: 10,
+
     
   }
 

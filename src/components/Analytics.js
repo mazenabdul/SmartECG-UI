@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { Ionicons, Fontisto } from 'react-native-vector-icons'
-import DataContext from '../context/dataContext'
+import { Ionicons, Fontisto, MaterialCommunityIcons } from 'react-native-vector-icons'
 
-const Analytics = ({heartRate, rInterval}) => {
+
+const Analytics = ({heartRate, rInterval, breathingRate}) => {
 
  
   return (
@@ -14,10 +14,10 @@ const Analytics = ({heartRate, rInterval}) => {
         <Text style={{ fontSize: 12 }}>BPM: {heartRate}</Text>
       </View>
       <View style={styles.aligner}>
-        <Ionicons style={{ fontSize: 30, color: '#6200ee' }} name='timer' />
-        <Text style={{ fontSize: 12 }}>Pulse Duration: </Text>
+        <MaterialCommunityIcons style={{ fontSize: 30, color: '#6200ee' }} name='lungs' />
+        <Text style={{ fontSize: 12, marginLeft: 10 }}>Breathing Rate: {breathingRate}</Text>
       </View>
-      <View style={styles.aligner}>
+      <View style={styles.aligner}> 
         <Fontisto style={{ fontSize: 30, color: '#6200ee' }} name='heartbeat-alt' />
         <Text style={{ fontSize: 12 }}>R-R: {rInterval}s </Text>
       </View>

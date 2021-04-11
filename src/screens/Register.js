@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, ImageBackground} from 'react-
 import { Button, TextInput } from 'react-native-paper'
 import { AntDesign } from 'react-native-vector-icons'
 import AuthContext from '../context/authContext'
+import * as SplashScreen from 'expo-splash-screen';
 
 const Register = ({ navigation }) => {
 
   //Context to manage registering endpoint
   const { state, newUser, localCheck } = useContext(AuthContext)
-  
+  const [ready, setReady] = useState(false)
   
   //Check if the user is locally signed in already
   useEffect(() => {

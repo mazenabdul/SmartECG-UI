@@ -9,12 +9,13 @@ import { LineChart } from "react-native-chart-kit";
 import chartProps from '../chartConfig/chartProps'
 import Analytics from '../components/Analytics'
 import ContentLoader, { Rect } from "react-content-loader/native"
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView'
 
 
 const Daily = ({ navigation }) => {
 
   const { state, dailyData, clearData } = useContext(DataContext)
-  const { data, showData, error, secondIndex, firstIndex, BPM } = state
+  const { data, showData, error, secondIndex, firstIndex, BPM, breathingRate } = state
   //State variables for date widget
   const [date, setDate] = useState(new Date())
   const [displayDate, setDisplayDate] = useState('')
@@ -54,7 +55,13 @@ const Daily = ({ navigation }) => {
        
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
       
-        <View style={styles.graphView} >
+        <ReactNativeZoomableView 
+          minZoom={1}
+          maxZoom={2}
+          zoomStep={1}
+          initialZoom={1}
+          bindToBorders={true} 
+          style={styles.graphView} >
         
         { (data && showData && !error) ? <LineChart 
           data={{ datasets: [{ data: data }]}} 
@@ -77,17 +84,17 @@ const Daily = ({ navigation }) => {
             foregroundColor="#e8e8fd">
             <Rect x="176" y="251" rx="100" ry="100" width="1" height="1" /> 
             <Rect x="108" y="138" rx="100" ry="100" width="2" height="2" /> 
-            <Rect x="10" y="30" rx="50" ry="50" width="320" height="266" /> 
-            <Rect x="10" y="370" rx="0" ry="0" width="320" height="95" />
+            <Rect x="10" y="120" rx="50" ry="50" width="320" height="266" /> 
+            <Rect x="10" y="470" rx="0" ry="0" width="320" height="95" />
           </ContentLoader> }
             
-        </View>
+        </ReactNativeZoomableView>
         
       </ScrollView>
       
       </View>
       <View>
-        { (data && showData && !error) && <Analytics heartRate={BPM} rInterval={(secondIndex-firstIndex)*0.004}  />  }
+        { (data && showData && !error) && <Analytics heartRate={BPM} rInterval={(secondIndex-firstIndex)*0.004} breathingRate={Math.floor((breathingRate)*60)}  />  }
         
       </View>
     </View>
@@ -100,6 +107,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flex: 1,
+    
   },
   graphView:{
     padding: 10
@@ -107,7 +115,17 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#6200ee',
     padding: 5,
-    marginVertical: 10
+    borderRadius: 15,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+
+    elevation: 30,
   },
   textContainer:{
     display: 'flex',

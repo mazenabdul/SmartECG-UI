@@ -17,6 +17,7 @@ const dataReducer = (state, action) => {
         firstIndex: action.payload.calculation.firstIndex, 
         secondIndex: action.payload.calculation.secondIndex, 
         BPM: action.payload.BPM,
+        breathingRate: action.payload.breathingRate,
         error: '',
         showData: true,
      
@@ -28,6 +29,7 @@ const dataReducer = (state, action) => {
         firstIndex: action.payload.calculation.firstIndex, 
         secondIndex: action.payload.calculation.secondIndex, 
         BPM: action.payload.averagedBPMs,
+        breathingRate: action.payload.averagedBreathing,
         error: '',
         showData: true
         }
@@ -37,6 +39,7 @@ const dataReducer = (state, action) => {
         firstIndex: action.payload.calculation.firstIndex, 
         secondIndex: action.payload.calculation.secondIndex, 
         BPM: action.payload.averagedBPMs,
+        breathingRate: action.payload.averagedBreathing,
         error: '',
         showData: true
         }
@@ -72,6 +75,7 @@ export const DataProvider = ({ children }) => {
   const initialState = { 
     data: [],
     BPM: 0,
+    breathingRate: 0,
     firstIndex: null,
     secondIndex: null,
     error: false,
@@ -80,6 +84,17 @@ export const DataProvider = ({ children }) => {
 //Create the reducer
 const [state, dispatch] = useReducer(dataReducer,  {initialState}  )
 
+//Create a helper function to compute the average breathing rates
+const breathingRate = (data) => {
+  if(data.length>0){
+    const breathingRates = data.map(element => { return element.breathingRate })
+    const avgBreathingRates = breathingRates.reduce(function(a, b){
+      return a + b;
+      }, 0)  
+    
+    return (avgBreathingRates/breathingRates.length)
+  }
+}
 
 //Create a helper function to calculate R-R Intervals
 const calculateRinterval = (voltages) => {
@@ -104,12 +119,14 @@ const calculateRinterval = (voltages) => {
 
 //Compute BPM average 
 const averageBPM = (data) => {
-  const BPMs = data.map((obj) => { return obj.heartRate })
+  if(data.length>0){
+    const BPMs = data.map((obj) => { return obj.heartRate })
 
-  //Find average of BPM array
-  const averageBPM = BPMs.reduce((a, b) => a + b) / BPMs.length
-  
-  return averageBPM
+    //Find average of BPM array
+    const averageBPM = BPMs.reduce((a, b) => a + b) / BPMs.length
+    
+    return averageBPM
+  }
 }
 
 //Create the actions here
@@ -132,9 +149,12 @@ const dailyData = async ({ dateString }) => {
     //Fetch the BPM
     const BPM = res.data[dataIndex].heartRate
 
-    let results = { voltages, calculation, BPM  }
-    
+    //Fetch the breathing rate 
+    const breathingRate = res.data[dataIndex].breathingRate
+
+    let results = { voltages, calculation, BPM, breathingRate }
     dispatch({ type: 'daily_data', payload: results })
+
   } catch (e) {
     dispatch({ type: 'error' })
    
@@ -176,8 +196,9 @@ const weeklyData = async ({ startDate, endDate }) => {
 
     const calculation = calculateRinterval(sum)
     const averagedBPMs = averageBPM(res.data)
-    
-    let results = { sum, calculation, averagedBPMs  }
+    const averagedBreathing = breathingRate(res.data)
+    //console.log(averagedBreathing)
+    let results = { sum, calculation, averagedBPMs, averagedBreathing  }
 
     dispatch({ type: 'weekly_data', payload: results })
   } catch (e) {
@@ -212,7 +233,9 @@ const monthlyData = async({ input }) => {
    
     const calculation = calculateRinterval(sum)
     const averagedBPMs = averageBPM(res.data)
-    let results = { sum, calculation, averagedBPMs }
+    const averagedBreathing = breathingRate(res.data)
+    //console.log(averagedBreathing)
+    let results = { sum, calculation, averagedBPMs, averagedBreathing }
     dispatch({ type: 'monthly_data', payload: results })
      //console.log(sum);
 } catch (e) {
