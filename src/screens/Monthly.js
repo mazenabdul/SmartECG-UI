@@ -17,7 +17,7 @@ const Monthly = ({ navigation }) => {
   const [month, setMonth] = useState('')
   const [year, setYear] = useState('')
   const [loading, setLoading] = useState(false)
-  const [rInterval, setRinterval] = useState([])
+  
 
   const { state, monthlyData, clearData } = useContext(DataContext)
   const { data, showData, error, secondIndex, firstIndex, BPM, breathingRate } = state

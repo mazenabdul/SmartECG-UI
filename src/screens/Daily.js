@@ -1,7 +1,7 @@
 import React, { useState,useContext } from 'react'
 import { NavigationEvents } from 'react-navigation'
 import DataContext from '../context/dataContext'
-import { View, StyleSheet, Text, ScrollView } from 'react-native'
+import { View, StyleSheet, Text, ScrollView, Platform } from 'react-native'
 import { Button } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TextHeader from '../components/TextHeader'
@@ -27,6 +27,7 @@ const Daily = ({ navigation }) => {
    
     const dateString = JSON.stringify(date).slice(1,11)
     setShow(false)
+    setShow(Platform.OS === 'ios')
     setDate(dateString)
     dailyData({ dateString })
     setDate(new Date())
@@ -43,22 +44,23 @@ const Daily = ({ navigation }) => {
         <Button mode='contained' style={styles.btn} onPress={() => setShow(!show)} >Select Timeframe</Button>
       <View style={styles.textContainer}>
       
-        {showData && <Text style={styles.text}>Data as of: {displayDate}</Text> } 
+        {(showData && Platform.OS !== 'ios') && <Text style={styles.text}>Data as of: {displayDate}</Text> } 
       </View>
       
       {show && ( <DateTimePicker
           testID="dateTimePicker"
           display="default"
           value={new Date()}
-          onChange={onChange} /> )}
+          onChange={onChange}
+          style={{ marginLeft: 300, width: '100%'}} /> )}
        {error ? <Text style={styles.textError}>No data found! Try another date.</Text> : null}
        
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
       
         <ReactNativeZoomableView 
           minZoom={1}
-          maxZoom={2}
-          zoomStep={1}
+          maxZoom={1.2}
+          zoomStep={0.2}
           initialZoom={1}
           bindToBorders={true} 
           style={styles.graphView} >

@@ -6,6 +6,7 @@ import { AuthProvider } from './src/context/authContext'
 import { DataProvider } from './src/context/dataContext'
 
 //Screens
+
 import RegisterScreen from './src/screens/Register'
 import SignInScreen from './src/screens/SignIn'
 import DeviceScreen from './src/screens/Device'
@@ -20,6 +21,7 @@ import { Octicons ,Entypo } from 'react-native-vector-icons'
 
 const navigator = createSwitchNavigator({
   authFlow: createStackNavigator({
+    
     Register: RegisterScreen,
     SignIn: SignInScreen
   }),
